@@ -4,7 +4,7 @@ Esta lista descreve o estado atual do projeto. A aprovação final cabe à Apple
 
 ## Implementado
 
-- App nativo para iPhone em SwiftUI, com interface em português brasileiro.
+- Interface Flutter em português brasileiro, com controle de Tempo de Uso nativo em Swift e extensão de monitoramento para iPhone. A base Android ainda não oferece controle de uso.
 - Sem cadastro, login social, servidor, anúncios ou compras. A regra de login equivalente da diretriz 4.8 não se aplica ao fluxo atual.
 - Seleção de apps, categorias e sites pelo controle de privacidade da Apple.
 - Autorização individual para o Tempo de Uso, monitoramento diário, estados do bichinho e bloqueio no estágio final.
@@ -24,7 +24,7 @@ Esta lista descreve o estado atual do projeto. A aprovação final cabe à Apple
 ## Antes de enviar à App Store
 
 1. Solicitar à Apple a capacidade **Family Controls (Distribution)** para o app e para a extensão. Sem a aprovação, o arquivo de distribuição pode não ser assinado.
-2. Disponibilizar uma URL pública para a política de privacidade e informar corretamente as práticas de coleta no App Store Connect. O repositório atual está privado; seu link não serve como URL pública.
+2. Informar no App Store Connect a URL pública da política de privacidade (`https://github.com/EricGuerrize/Desvicio/blob/main/PRIVACY.md`) e declarar corretamente as práticas de coleta. Recomenda-se publicar uma página estável antes do envio.
 3. Definir uma página pública de suporte com contato adequado, completar a seção de contato da política e mantê-la atualizada.
 4. Validar o ícone final e criar capturas de tela reais, descrição, palavras-chave, classificação etária e informações de revisão.
 5. Explicar ao revisor que o app usa autorização individual de Tempo de Uso e informar o passo a passo para selecionar apps e reproduzir o bloqueio. Um vídeo em iPhone real pode ajudar se o fluxo for difícil de reproduzir.

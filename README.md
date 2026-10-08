@@ -1,71 +1,41 @@
 # Desvício
 
-Um bichinho virtual que reage ao tempo gasto nos aplicativos que você escolheu controlar. A proposta combina limites de uso, sessões de foco e um jogo de cuidado com linguagem brasileira.
+Um bichinho virtual que reage ao tempo gasto nos aplicativos que você escolheu controlar. A interface agora é feita em **Flutter**, com foco inicial no iPhone. O monitoramento e o bloqueio no iOS usam as APIs nativas **Family Controls**, **Device Activity** e **Managed Settings**.
 
-## Ideia central
+## Estado do projeto
 
-**Cuide do seu tempo. Seu bichinho sente a diferença.**
+- **iPhone:** interface Flutter, seleção de apps, meta diária, estados do bichinho, bloqueio após 30 minutos extras, pausas de foco e exclusão dos dados locais. A extensão nativa em Swift continua responsável pelos marcos de uso e pelo bloqueio. O app Flutter usa o mesmo identificador e App Group da versão SwiftUI anterior para conservar os dados locais.
+- **Android:** projeto Flutter criado e interface compartilhada. O controle de outros apps ainda não está implementado. O app informa isso explicitamente; a versão Android ainda não deve ser publicada.
+- **Contas e pagamentos:** não existem nesta versão. Uma eventual assinatura será planejada após validar o fluxo principal no iPhone.
 
-O usuário escolhe os aplicativos que mais o distraem e define uma meta diária. Na metade da meta, o bichinho fica cansado; no limite, fica dodói; após mais 30 minutos, vira um fantasminha e os apps escolhidos são bloqueados. Uma nova jornada começa no dia seguinte.
+O código anterior em SwiftUI permanece em `Desvicio/` e `Desvicio.xcodeproj` como referência da migração. O projeto ativo é o Flutter na raiz do repositório.
 
-O bichinho reage apenas aos apps selecionados, não ao uso necessário do celular. Widget e notificações são ideias para uma versão futura.
+## Rodar e visualizar no Xcode
 
-## Visão para a primeira versão pública
+1. Instale [Flutter](https://docs.flutter.dev/get-started/install/macos) e Xcode. Neste Mac, Flutter 3.47.6 está instalado.
+2. Na raiz do repositório, rode `flutter pub get` e `flutter build ios --config-only`.
+3. Abra **`ios/Runner.xcworkspace`** no Xcode, selecione o esquema **Runner** e um simulador de iPhone, então pressione **⌘R**. Para iniciar pelo terminal, use `flutter run -d <id-do-simulador>`.
+4. Para editar a interface, altere `lib/main.dart`. O Xcode compila e executa o app, mas a edição visual Flutter é mais prática com hot reload pelo Flutter ou pela extensão Flutter de VS Code/Android Studio.
 
-1. **Início:** escolher o bichinho, dar um nome e definir uma meta diária para apps escolhidos.
-2. **Hoje:** mostrar o bichinho, tempo usado, tempo restante e uma ação rápida para começar um período de foco.
-3. **Limite:** o bichinho piora ao atingir a meta e os apps escolhidos são bloqueados após 30 minutos extras.
-4. **Cuidado:** melhorar o estado do bichinho ao cumprir pausas e sessões de foco; desbloquear itens cosméticos simples.
-5. **Resumo:** mostrar a evolução dos últimos sete dias e permitir ajustar a meta sem punição.
+O alvo mínimo do iOS é 17.4. O simulador verifica interface e integração, mas **não valida o bloqueio real** de aplicativos. Isso precisa de teste em iPhone físico.
 
-## Regras iniciais do jogo
+## Estrutura
 
-- Começar com uma meta sugerida de 2 horas por dia nos apps escolhidos; o usuário pode alterá-la.
-- O estado do bichinho tem quatro níveis: **animado**, **cansado**, **dodói** e **fantasminha**.
-- A piora acontece na metade da meta, no limite e após 30 minutos extras. O bloqueio ocorre no último estágio.
-- Sessões de foco de 15, 25 ou 45 minutos bloqueiam os apps escolhidos durante a pausa. Ao terminar, recuperam parte da energia, exceto no estágio final do dia.
-- O estado crítico é reversível. O jogo mostra progresso e recomeços, sem streaks que zeram tudo após um dia ruim.
+- `lib/main.dart`: interface, bichinho e comunicação com as plataformas.
+- `ios/Runner/AppDelegate.swift`: ponte entre Flutter e o Tempo de Uso nativo.
+- `ios/Runner/ScreenTime/`: estado e lógica de monitoramento no iPhone.
+- `ios/DesvicioMonitor/`: extensão que recebe os marcos de uso e altera o estado do bichinho.
+- `android/`: base Android. O controle de uso ainda requer implementação e validação próprias.
+- `PRIVACY.md` e `APP_STORE.md`: privacidade e preparação para publicação.
 
-Esses valores são hipóteses de produto para testar, não regras definitivas.
+## Para testar no iPhone
 
-## Personalidade
+Configure uma equipe Apple Developer no Xcode para **Runner** e **DesvicioMonitor**, registre `com.desvicio.app`, `com.desvicio.app.monitor` e o App Group `group.com.desvicio.app`, e habilite Family Controls e App Groups para os alvos. A distribuição exige a aprovação da Apple para **Family Controls (Distribution)** no app e na extensão. A adesão paga ao Apple Developer Program é necessária para TestFlight e App Store e pode ser necessária para testar as capacidades avançadas no aparelho.
 
-Visual de brinquedo digital brasileiro: expressivo, acolhedor e com humor leve. Linguagem curta, sem bronca: “Bora dar uma respirada?”, “Seu bichinho tá pedindo um intervalo”. O personagem, nome, ilustrações e interface devem ser originais.
+O app não exige login. A opção **Ajustes → Apagar meus dados deste iPhone** interrompe o controle e remove os dados locais. Se contas forem adicionadas no futuro, serão necessárias opções de entrada equivalentes às exigidas pela Apple e exclusão de conta dentro do app.
 
-## Plataforma e viabilidade
+## Regras atuais do bichinho
 
-Para controlar e bloquear outros aplicativos no iPhone, a implementação precisa ser nativa e usar **Family Controls**, **Device Activity** e **Managed Settings**. O usuário precisa conceder autorização. A distribuição também depende da permissão da Apple para o recurso Family Controls no aplicativo e nas extensões necessárias.
+Meta sugerida de 120 minutos nos apps escolhidos. O bichinho fica cansado na metade, dodói no limite e vira fantasminha após mais 30 minutos, quando os apps são bloqueados. Pausas de foco de 15, 25 ou 45 minutos bloqueiam os apps escolhidos durante a sessão. O estado recomeça no dia seguinte.
 
-O projeto atual implementa o fluxo principal, o monitoramento por marcos de uso, o bloqueio no último estágio e pausas de foco que também bloqueiam os apps escolhidos. Ainda não inclui widget, notificações, histórico de sete dias, itens cosméticos nem um relatório de minutos exatos. A pausa registra o tempo do cronômetro; ela não verifica se a pessoa deixou de usar outros apps.
-
-O app não cria conta e não oferece login Google ou Apple. Todas as informações que ele salva ficam no iPhone. Em **Ajustes → Apagar meus dados deste iPhone**, o usuário pode interromper o controle e limpar esses dados. Leia a [política de privacidade](PRIVACY.md) e a [preparação para a App Store](APP_STORE.md).
-
-## Visualizar no Xcode
-
-1. Abra [`Desvicio.xcodeproj`](Desvicio.xcodeproj) no Xcode, selecione o esquema **Desvicio** e um simulador de iPhone na barra superior.
-2. Pressione **⌘R** para ver a tela de boas-vindas no simulador.
-3. Para visualizar a tela principal sem configurar o Tempo de Uso, abra `Desvicio/App/RootView.swift`, escolha **Editor → Canvas** e veja as prévias **Boas-vindas** e **Tela do bichinho**.
-
-O projeto foi compilado sem assinatura para iPhone e simulador com Xcode 27. A tela inicial foi aberta no simulador. O simulador não valida o controle real de outros apps.
-
-## Testar no iPhone
-
-1. Entre com sua conta Apple em **Xcode → Settings → Apple Accounts** e selecione sua equipe em **Signing & Capabilities** nos alvos **Desvicio** e **DesvicioMonitor**.
-2. Configure identificadores de bundle próprios, registre um App Group e use o mesmo identificador nos dois arquivos de entitlements e em `DesvicioConfig.groupID`.
-3. Habilite **Family Controls** e **App Groups** para os dois alvos. Instale no iPhone e conceda a autorização de Tempo de Uso no primeiro acesso.
-4. Verifique o bloqueio real nos marcos de uso e durante uma sessão de foco.
-
-O alvo mínimo é iOS 17.4. A conta Apple gratuita permite desenvolver e visualizar o app, mas não permite distribuí-lo na App Store ou TestFlight. As capacidades avançadas podem exigir a adesão ao Apple Developer Program antes mesmo do teste completo no iPhone. A distribuição também exige que a Apple aprove **Family Controls (Distribution)** para o app e a extensão.
-
-## Decisões abertas
-
-- Nome final: **Desvício** é mais marcante e comunica a proposta; **Desapego** é mais suave e amplo.
-- Personagem e estilo visual.
-- Modelo gratuito e eventuais itens pagos.
-
-## Referências
-
-- [Brainrot: Screen Time Control na App Store](https://apps.apple.com/br/app/brainrot-screen-time-control/id6744338972)
-- [Screen Time Technology Frameworks, Apple Developer](https://developer.apple.com/documentation/screentimeapidocumentation/)
-- [Configuring Family Controls, Apple Developer](https://developer.apple.com/documentation/Xcode/configuring-family-controls)
-- [Requesting the Family Controls entitlement, Apple Developer](https://developer.apple.com/documentation/familycontrols/requesting-the-family-controls-entitlement)
+Esses valores são hipóteses de produto. O personagem e a identidade visual são originais.

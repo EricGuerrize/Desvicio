@@ -2,13 +2,13 @@
 
 Última atualização: 8 de outubro de 2026.
 
-O Desvício é um aplicativo para iPhone que ajuda você a limitar o uso de aplicativos, categorias e sites escolhidos por você. Ele funciona sem cadastro e sem servidor próprio.
+O Desvício é um aplicativo para iPhone que ajuda você a limitar o uso de aplicativos, categorias e sites escolhidos por você. Há uma base Android em desenvolvimento, sem controle de tempo de tela nesta versão. O aplicativo funciona sem cadastro e sem servidor próprio.
 
 ## Dados usados pelo aplicativo
 
 Com sua autorização, o Desvício usa as APIs de Tempo de Uso da Apple para receber seleções protegidas de apps, categorias e sites, acompanhar quando a meta configurada é atingida e bloquear as seleções no estágio final. A Apple representa essas escolhas por identificadores protegidos. O Desvício não acessa o conteúdo das suas mensagens, fotos ou navegação.
 
-O nome e estado do bichinho, a meta diária, as seleções protegidas e os minutos de foco ficam armazenados localmente no iPhone, em um contêiner compartilhado entre o aplicativo e sua extensão de monitoramento.
+No iPhone, o nome e estado do bichinho, a meta diária, as seleções protegidas e os minutos de foco ficam armazenados localmente em um contêiner compartilhado entre o aplicativo e sua extensão de monitoramento. Na base Android atual, apenas o nome e a meta são guardados localmente; o monitoramento ainda não está disponível.
 
 ## Coleta e compartilhamento
 
@@ -24,4 +24,4 @@ Se o aplicativo passar a usar contas, sincronização, análise, anúncios ou co
 
 ## Contato
 
-O canal público para dúvidas de privacidade será informado antes da publicação na App Store. Este documento ainda não é uma URL pública porque o repositório do projeto está privado.
+O canal público para dúvidas de privacidade será informado antes da publicação na App Store. Este documento está disponível publicamente em https://github.com/EricGuerrize/Desvicio/blob/main/PRIVACY.md.
