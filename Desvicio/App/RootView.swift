@@ -31,7 +31,7 @@ struct RootView: View {
 
 struct OnboardingView: View {
     @EnvironmentObject private var model: DesvicioModel
-    @State private var name = "Pingo"
+    @State private var name = ""
     @State private var isPickerPresented = false
     @State private var showPrivacy = false
 
@@ -46,7 +46,7 @@ struct OnboardingView: View {
                     Text("Menos scroll.\nMais vida.")
                         .font(.system(size: 42, weight: .black, design: .rounded))
                         .foregroundStyle(Theme.ink)
-                    Text("Seu companheiro sente quando você se perde na tela — e comemora cada pausa.")
+                    Text("Seu cérebro sente quando você se perde na tela — e descansa a cada pausa.")
                         .font(.system(size: 17))
                         .foregroundStyle(Theme.ink.opacity(0.7))
                 }
@@ -57,9 +57,9 @@ struct OnboardingView: View {
 
                 Card {
                     VStack(alignment: .leading, spacing: 16) {
-                        Label("Dê um nome ao seu bichinho", systemImage: "heart.fill")
+                        Label("Dê um nome ao seu cérebro", systemImage: "brain.head.profile")
                             .font(.headline)
-                        TextField("Nome", text: $name)
+                        TextField("Meu Cérebro", text: $name)
                             .textInputAutocapitalization(.words)
                             .padding(14)
                             .background(Theme.cream, in: RoundedRectangle(cornerRadius: 14))
@@ -102,7 +102,8 @@ struct OnboardingView: View {
                 }
 
                 Button {
-                    model.saveName(name)
+                    let finalName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+                    model.saveName(finalName.isEmpty ? "Meu Cérebro" : finalName)
                     model.configure()
                 } label: {
                     HStack {

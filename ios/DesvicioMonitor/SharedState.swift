@@ -20,28 +20,29 @@ enum PetMood: Int, Codable {
 
     var title: String {
         switch self {
-        case .happy: "Animado"
-        case .tired: "Cansadinho"
-        case .sick: "Dodói"
-        case .ghost: "Fantasminha"
+        case .happy: "Saudável"
+        case .tired: "Cansado"
+        case .sick: "Fritando"
+        case .ghost: "Pifou"
         }
     }
 
     var message: String {
         switch self {
-        case .happy: "Tá sobrando tempo pra viver lá fora."
-        case .tired: "Uma pausa cairia bem agora."
-        case .sick: "Bora largar o scroll um pouquinho?"
-        case .ghost: "Ainda dá tempo de cuidar de mim."
+        case .happy: "Seu cérebro tá fresco e pronto pra viver."
+        case .tired: "O excesso de tela começou a pesar na mente."
+        case .sick: "Seu cérebro tá fritando no scroll infinito!"
+        case .ghost: "Seu cérebro pifou pra se proteger. Desconecte agora."
         }
     }
 }
 
 struct PetState: Codable {
-    var name: String = "Pingo"
+    var name: String = "Meu Cérebro"
     var mood: PetMood = .happy
     var day: String = Self.todayKey()
     var focusMinutes: Int = 0
+    var streakDays: Int = 0
 
     static func todayKey(_ date: Date = .now) -> String {
         let formatter = DateFormatter()
@@ -85,6 +86,11 @@ enum SharedStorage {
                   var value = try? JSONDecoder().decode(PetState.self, from: data)
             else { return PetState() }
             if value.day != PetState.todayKey() {
+                if value.mood != .ghost {
+                    value.streakDays += 1
+                } else {
+                    value.streakDays = 0
+                }
                 value.day = PetState.todayKey()
                 value.mood = .happy
                 value.focusMinutes = 0

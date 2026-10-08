@@ -27,12 +27,13 @@ O alvo mínimo do iOS é 17.4. O simulador verifica interface e integração, ma
 - `ios/Runner/AppDelegate.swift`: ponte entre Flutter e o Tempo de Uso nativo.
 - `ios/Runner/ScreenTime/`: estado e lógica de monitoramento no iPhone.
 - `ios/DesvicioMonitor/`: extensão que recebe os marcos de uso e altera o estado do bichinho.
+- `ios/DesvicioShield/`: extensão que personaliza a tela de bloqueio. O simulador não a exibe.
 - `android/`: base Android. O controle de uso ainda requer implementação e validação próprias.
 - `PRIVACY.md` e `APP_STORE.md`: privacidade e preparação para publicação.
 
 ## Para testar no iPhone
 
-Configure uma equipe Apple Developer no Xcode para **Runner** e **DesvicioMonitor**, registre `com.desvicio.app`, `com.desvicio.app.monitor` e o App Group `group.com.desvicio.app`, e habilite Family Controls e App Groups para os alvos. A distribuição exige a aprovação da Apple para **Family Controls (Distribution)** no app e na extensão. A adesão paga ao Apple Developer Program é necessária para TestFlight e App Store e pode ser necessária para testar as capacidades avançadas no aparelho.
+Configure uma equipe Apple Developer no Xcode para **Runner**, **DesvicioMonitor** e **DesvicioShield**, registre `com.desvicio.app`, `com.desvicio.app.monitor`, `com.desvicio.app.shield` e o App Group `group.com.desvicio.app`, e habilite Family Controls e App Groups para os alvos. A distribuição exige a aprovação da Apple para **Family Controls (Distribution)** no app e nas extensões. A adesão paga ao Apple Developer Program é necessária para TestFlight e App Store e pode ser necessária para testar as capacidades avançadas no aparelho.
 
 O app não exige login. A opção **Ajustes → Apagar meus dados deste iPhone** interrompe o controle e remove os dados locais. Se contas forem adicionadas no futuro, serão necessárias opções de entrada equivalentes às exigidas pela Apple e exclusão de conta dentro do app.
 

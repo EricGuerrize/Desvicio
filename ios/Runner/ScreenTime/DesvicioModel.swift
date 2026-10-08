@@ -41,7 +41,7 @@ final class DesvicioModel: ObservableObject {
 
     func saveName(_ name: String) {
         pet.name = name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-            ? "Pingo" : String(name.prefix(20))
+            ? "Meu Cérebro" : String(name.prefix(20))
         SharedStorage.pet = pet
     }
 
@@ -62,11 +62,6 @@ final class DesvicioModel: ObservableObject {
     }
 
     func configure(completion: @escaping (String?) -> Void) {
-        guard selectedCount > 0 else {
-            errorMessage = "Escolha pelo menos um app, categoria ou site."
-            completion(errorMessage)
-            return
-        }
         guard SharedStorage.isSharedContainerAvailable else {
             errorMessage = "O App Group não está disponível. Confira a assinatura dos dois alvos no Xcode."
             completion(errorMessage)
@@ -75,10 +70,14 @@ final class DesvicioModel: ObservableObject {
         isBusy = true
         Task {
             do {
-                try await AuthorizationCenter.shared.requestAuthorization(for: .individual)
+                if AuthorizationCenter.shared.authorizationStatus != .approved {
+                    try? await AuthorizationCenter.shared.requestAuthorization(for: .individual)
+                }
                 SharedStorage.selection = selection
                 SharedStorage.dailyLimitMinutes = limitMinutes
-                try installMonitor()
+                if selectedCount > 0 {
+                    try? installMonitor()
+                }
                 SharedStorage.isConfigured = true
                 isConfigured = true
                 completion(nil)
@@ -91,6 +90,7 @@ final class DesvicioModel: ObservableObject {
     }
 
     func startMonitoring() {
+        guard selectedCount > 0 else { return }
         let previousSelection = SharedStorage.selection
         let previousLimit = SharedStorage.dailyLimitMinutes
         do {
@@ -110,6 +110,12 @@ final class DesvicioModel: ObservableObject {
     }
 
     private func installMonitor() throws {
+        let apps = selection.applicationTokens
+        let categories = selection.categoryTokens
+        let domains = selection.webDomainTokens
+        guard !apps.isEmpty || !categories.isEmpty || !domains.isEmpty else {
+            return
+        }
         func duration(_ minutes: Int) -> DateComponents {
             DateComponents(hour: minutes / 60, minute: minutes % 60)
         }
@@ -118,9 +124,6 @@ final class DesvicioModel: ObservableObject {
             intervalEnd: DateComponents(hour: 23, minute: 59),
             repeats: true
         )
-        let apps = selection.applicationTokens
-        let categories = selection.categoryTokens
-        let domains = selection.webDomainTokens
         let half = max(1, limitMinutes / 2)
         let events: [DeviceActivityEvent.Name: DeviceActivityEvent] = [
             DesvicioConfig.halfway: DeviceActivityEvent(

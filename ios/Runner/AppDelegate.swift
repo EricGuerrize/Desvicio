@@ -33,7 +33,7 @@ import FamilyControls
       model.refresh()
       result(state())
     case "saveName":
-      model.saveName(args["name"] as? String ?? "Pingo")
+      model.saveName(args["name"] as? String ?? "Meu Cérebro")
       result(nil)
     case "saveLimit":
       guard let minutes = args["minutes"] as? Int,
@@ -83,7 +83,8 @@ import FamilyControls
       "mood": model.pet.mood.rawValue,
       "selectedCount": model.selectedCount,
       "limitMinutes": model.limitMinutes,
-      "focusMinutes": model.pet.focusMinutes
+      "focusMinutes": model.pet.focusMinutes,
+      "streakDays": model.pet.streakDays
     ]
     if let session = model.focusSession {
       value["focusEnd"] = Int(session.endDate.timeIntervalSince1970 * 1000)
