@@ -1,10 +1,12 @@
 import Foundation
 import FamilyControls
 import DeviceActivity
+import ManagedSettings
 
 enum DesvicioConfig {
     static let groupID = "group.com.desvicio.app"
     static let dailyActivity = DeviceActivityName("desvicio.daily")
+    static let focusActivity = DeviceActivityName("desvicio.focus")
     static let halfway = DeviceActivityEvent.Name("halfway")
     static let limit = DeviceActivityEvent.Name("limit")
     static let extra = DeviceActivityEvent.Name("extra")
@@ -49,7 +51,18 @@ struct PetState: Codable {
     }
 }
 
+struct FocusSession: Codable {
+    let endDate: Date
+    let minutes: Int
+}
+
 enum SharedStorage {
+    static var isSharedContainerAvailable: Bool {
+        FileManager.default.containerURL(
+            forSecurityApplicationGroupIdentifier: DesvicioConfig.groupID
+        ) != nil
+    }
+
     static var defaults: UserDefaults {
         UserDefaults(suiteName: DesvicioConfig.groupID) ?? .standard
     }
@@ -95,5 +108,60 @@ enum SharedStorage {
     static var isConfigured: Bool {
         get { defaults.bool(forKey: "isConfigured") }
         set { defaults.set(newValue, forKey: "isConfigured") }
+    }
+
+    static var focusSession: FocusSession? {
+        get {
+            guard let data = defaults.data(forKey: "focusSession") else { return nil }
+            return try? JSONDecoder().decode(FocusSession.self, from: data)
+        }
+        set {
+            if let newValue {
+                defaults.set(try? JSONEncoder().encode(newValue), forKey: "focusSession")
+            } else {
+                defaults.removeObject(forKey: "focusSession")
+            }
+        }
+    }
+
+    static func erase() {
+        for key in ["selection", "pet", "dailyLimitMinutes", "isConfigured", "focusSession"] {
+            defaults.removeObject(forKey: key)
+        }
+    }
+}
+
+enum ShieldControl {
+    static func sync(_ pet: PetState, selection: FamilyActivitySelection) {
+        let store = ManagedSettingsStore()
+        guard pet.mood == .ghost else {
+            store.clearAllSettings()
+            return
+        }
+        store.shield.applications = selection.applicationTokens.isEmpty
+            ? nil : selection.applicationTokens
+        store.shield.applicationCategories = selection.categoryTokens.isEmpty
+            ? nil : .specific(selection.categoryTokens)
+        store.shield.webDomains = selection.webDomainTokens.isEmpty
+            ? nil : selection.webDomainTokens
+    }
+}
+
+enum FocusShield {
+    private static var store: ManagedSettingsStore {
+        ManagedSettingsStore(named: ManagedSettingsStore.Name("desvicio.focus"))
+    }
+
+    static func start(selection: FamilyActivitySelection) {
+        store.shield.applications = selection.applicationTokens.isEmpty
+            ? nil : selection.applicationTokens
+        store.shield.applicationCategories = selection.categoryTokens.isEmpty
+            ? nil : .specific(selection.categoryTokens)
+        store.shield.webDomains = selection.webDomainTokens.isEmpty
+            ? nil : selection.webDomainTokens
+    }
+
+    static func stop() {
+        store.clearAllSettings()
     }
 }

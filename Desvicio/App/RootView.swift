@@ -3,6 +3,7 @@ import FamilyControls
 
 struct RootView: View {
     @EnvironmentObject private var model: DesvicioModel
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         Group {
@@ -22,6 +23,9 @@ struct RootView: View {
         } message: {
             Text(model.errorMessage ?? "")
         }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { model.refresh() }
+        }
     }
 }
 
@@ -29,6 +33,7 @@ struct OnboardingView: View {
     @EnvironmentObject private var model: DesvicioModel
     @State private var name = "Pingo"
     @State private var isPickerPresented = false
+    @State private var showPrivacy = false
 
     var body: some View {
         ScrollView {
@@ -114,11 +119,14 @@ struct OnboardingView: View {
                     .font(.footnote)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
+                Button("Política de privacidade") { showPrivacy = true }
+                    .font(.footnote)
             }
             .padding(24)
         }
         .familyActivityPicker(isPresented: $isPickerPresented, selection: $model.selection)
         .onChange(of: model.selection) { _, _ in model.saveSelection() }
+        .sheet(isPresented: $showPrivacy) { PrivacyView() }
     }
 }
 
@@ -197,6 +205,8 @@ struct SettingsView: View {
     @EnvironmentObject private var model: DesvicioModel
     @Environment(\.dismiss) private var dismiss
     @State private var isPickerPresented = false
+    @State private var showEraseConfirmation = false
+    @State private var showPrivacy = false
 
     var body: some View {
         NavigationStack {
@@ -211,6 +221,13 @@ struct SettingsView: View {
                         ForEach([30, 60, 90, 120, 150, 180, 240], id: \.self) { minutes in
                             Text("\(minutes) min").tag(minutes)
                         }
+                    }
+                }
+                Section("Privacidade") {
+                    Text("O Desvício não cria conta. As escolhas e o estado do bichinho ficam neste iPhone.")
+                    Button("Política de privacidade") { showPrivacy = true }
+                    Button("Apagar meus dados deste iPhone", role: .destructive) {
+                        showEraseConfirmation = true
                     }
                 }
                 Section {
@@ -233,6 +250,59 @@ struct SettingsView: View {
             }
             .familyActivityPicker(isPresented: $isPickerPresented, selection: $model.selection)
             .onChange(of: model.selection) { _, _ in model.saveSelection() }
+            .sheet(isPresented: $showPrivacy) { PrivacyView() }
+            .confirmationDialog(
+                "Apagar os dados do Desvício?",
+                isPresented: $showEraseConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button("Apagar dados", role: .destructive) {
+                    model.eraseLocalData()
+                    dismiss()
+                }
+            } message: {
+                Text("O monitoramento será desligado, os apps serão desbloqueados e o bichinho, a meta e a seleção serão apagados.")
+            }
+        }
+    }
+}
+
+struct PrivacyView: View {
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    Text("O Desvício funciona sem conta e sem servidor próprio.")
+                        .font(.title3.bold())
+                    Group {
+                        Text("Dados usados")
+                            .font(.headline)
+                        Text("Com sua autorização, as APIs de Tempo de Uso da Apple fornecem seleções protegidas de apps, categorias e sites e avisam quando a meta é atingida. O Desvício não lê mensagens, fotos nem o conteúdo da navegação.")
+                        Text("Armazenamento")
+                            .font(.headline)
+                        Text("Nome e estado do bichinho, meta, seleção protegida e minutos de foco ficam no iPhone, em um contêiner compartilhado entre o app e sua extensão.")
+                        Text("Coleta e compartilhamento")
+                            .font(.headline)
+                        Text("Esta versão não envia seus dados de uso para servidores, não usa anúncios ou serviços de análise e não compartilha esses dados com terceiros.")
+                        Text("Apagar dados")
+                            .font(.headline)
+                        Text("Em Ajustes, toque em “Apagar meus dados deste iPhone”. O monitoramento será interrompido, os apps serão desbloqueados e os dados locais serão removidos.")
+                    }
+                    .foregroundStyle(Theme.ink.opacity(0.8))
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(24)
+            }
+            .background(Theme.cream.ignoresSafeArea())
+            .navigationTitle("Privacidade")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Fechar") { dismiss() }
+                }
+            }
         }
     }
 }
@@ -240,9 +310,7 @@ struct SettingsView: View {
 struct FocusView: View {
     @EnvironmentObject private var model: DesvicioModel
     @Environment(\.dismiss) private var dismiss
-    @State private var endDate: Date?
     @State private var duration = 25
-    @State private var completed = false
 
     var body: some View {
         NavigationStack {
@@ -251,38 +319,40 @@ struct FocusView: View {
                 Image(systemName: "leaf.fill")
                     .font(.system(size: 75))
                     .foregroundStyle(Theme.moss)
-                Text(completed ? "Boa! Seu bichinho agradece." : "Um tempo só seu")
+                Text("Um tempo só seu")
                     .font(.system(size: 29, weight: .black, design: .rounded))
                     .multilineTextAlignment(.center)
-                if let endDate {
+                if let session = model.focusSession {
                     TimelineView(.periodic(from: .now, by: 1)) { context in
-                        let remaining = max(0, Int(endDate.timeIntervalSince(context.date)))
+                        let remaining = max(0, Int(session.endDate.timeIntervalSince(context.date)))
                         Text("\(remaining / 60):\(String(format: "%02d", remaining % 60))")
                             .font(.system(size: 54, weight: .bold, design: .rounded))
                             .monospacedDigit()
                             .onChange(of: remaining) { _, value in
-                                if value == 0 && !completed {
-                                    completed = true
-                                    model.finishFocus(minutes: duration)
-                                    self.endDate = nil
-                                }
+                                if value == 0 { model.refresh() }
                             }
                     }
-                } else if !completed {
+                    Button("Encerrar agora", role: .destructive) {
+                        model.cancelFocus()
+                    }
+                    Text("Os apps escolhidos ficam bloqueados durante esta pausa.")
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                } else {
                     Picker("Duração", selection: $duration) {
-                        Text("10 min").tag(10)
+                        Text("15 min").tag(15)
                         Text("25 min").tag(25)
                         Text("45 min").tag(45)
                     }
                     .pickerStyle(.segmented)
                     Button("Começar") {
-                        endDate = .now.addingTimeInterval(TimeInterval(duration * 60))
+                        model.startFocus(minutes: duration)
                     }
                     .buttonStyle(PrimaryButtonStyle())
+                    Text("Ao começar, os apps que você escolheu serão bloqueados até o fim da pausa.")
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
                 }
-                Text("Deixe o celular de lado. Volte aqui quando o tempo terminar.")
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
                 Spacer()
             }
             .padding(30)
@@ -296,5 +366,18 @@ struct FocusView: View {
                 }
             }
         }
+        .onAppear { model.refresh() }
     }
 }
+
+#if DEBUG
+#Preview("Boas-vindas") {
+    OnboardingView()
+        .environmentObject(DesvicioModel())
+}
+
+#Preview("Tela do bichinho") {
+    HomeView()
+        .environmentObject(DesvicioModel())
+}
+#endif

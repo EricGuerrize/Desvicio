@@ -65,13 +65,25 @@ struct PetView: View {
 
     @ViewBuilder private var mouth: some View {
         if mood == .happy {
-            Image(systemName: "mouth")
-                .font(.system(size: size * 0.16, weight: .medium))
-                .foregroundStyle(Theme.ink)
+            Smile()
+                .stroke(Theme.ink, style: StrokeStyle(lineWidth: size * 0.014, lineCap: .round))
+                .frame(width: size * 0.18, height: size * 0.08)
         } else {
             Capsule()
                 .fill(Theme.ink)
                 .frame(width: size * 0.11, height: size * 0.018)
         }
+    }
+}
+
+private struct Smile: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: rect.minX, y: rect.minY))
+        path.addQuadCurve(
+            to: CGPoint(x: rect.maxX, y: rect.minY),
+            control: CGPoint(x: rect.midX, y: rect.maxY * 1.7)
+        )
+        return path
     }
 }

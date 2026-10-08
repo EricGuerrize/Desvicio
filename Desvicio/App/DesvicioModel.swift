@@ -10,6 +10,7 @@ final class DesvicioModel: ObservableObject {
     @Published var selection = SharedStorage.selection
     @Published var limitMinutes = SharedStorage.dailyLimitMinutes
     @Published var isConfigured = SharedStorage.isConfigured
+    @Published var focusSession = SharedStorage.focusSession
     @Published var errorMessage: String?
     @Published var isBusy = false
 
@@ -23,7 +24,19 @@ final class DesvicioModel: ObservableObject {
     }
 
     func refresh() {
+        completeFocusIfDue()
         pet = SharedStorage.pet
+        focusSession = SharedStorage.focusSession
+        if isConfigured {
+            guard AuthorizationCenter.shared.authorizationStatus == .approved else {
+                stopControl()
+                return
+            }
+            ShieldControl.sync(pet, selection: SharedStorage.selection)
+            if focusSession != nil {
+                FocusShield.start(selection: SharedStorage.selection)
+            }
+        }
     }
 
     func saveName(_ name: String) {
@@ -33,18 +46,28 @@ final class DesvicioModel: ObservableObject {
     }
 
     func saveSelection() {
-        SharedStorage.selection = selection
-        if isConfigured { startMonitoring() }
+        if isConfigured {
+            startMonitoring()
+        } else {
+            SharedStorage.selection = selection
+        }
     }
 
     func saveLimit() {
-        SharedStorage.dailyLimitMinutes = limitMinutes
-        if isConfigured { startMonitoring() }
+        if isConfigured {
+            startMonitoring()
+        } else {
+            SharedStorage.dailyLimitMinutes = limitMinutes
+        }
     }
 
     func configure() {
         guard selectedCount > 0 else {
             errorMessage = "Escolha pelo menos um app, categoria ou site."
+            return
+        }
+        guard SharedStorage.isSharedContainerAvailable else {
+            errorMessage = "O App Group não está disponível. Confira a assinatura dos dois alvos no Xcode."
             return
         }
         isBusy = true
@@ -64,11 +87,20 @@ final class DesvicioModel: ObservableObject {
     }
 
     func startMonitoring() {
+        let previousSelection = SharedStorage.selection
+        let previousLimit = SharedStorage.dailyLimitMinutes
         do {
             SharedStorage.selection = selection
             SharedStorage.dailyLimitMinutes = limitMinutes
             try installMonitor()
+            if SharedStorage.focusSession != nil {
+                FocusShield.start(selection: selection)
+            }
         } catch {
+            SharedStorage.selection = previousSelection
+            SharedStorage.dailyLimitMinutes = previousLimit
+            selection = previousSelection
+            limitMinutes = previousLimit
             errorMessage = "Não foi possível atualizar a meta: \(error.localizedDescription)"
         }
     }
@@ -100,24 +132,75 @@ final class DesvicioModel: ObservableObject {
                 threshold: duration(limitMinutes + 30), includesPastActivity: true
             )
         ]
-        center.stopMonitoring([DesvicioConfig.dailyActivity])
-        store.clearAllSettings()
         try center.startMonitoring(DesvicioConfig.dailyActivity, during: schedule, events: events)
+        ShieldControl.sync(SharedStorage.pet, selection: selection)
     }
 
     func stopControl() {
-        center.stopMonitoring([DesvicioConfig.dailyActivity])
+        center.stopMonitoring([DesvicioConfig.dailyActivity, DesvicioConfig.focusActivity])
         store.clearAllSettings()
+        FocusShield.stop()
+        SharedStorage.focusSession = nil
+        focusSession = nil
         SharedStorage.isConfigured = false
         isConfigured = false
     }
 
-    func finishFocus(minutes: Int) {
-        refresh()
-        pet.focusMinutes += minutes
-        if pet.mood.rawValue > 0 {
-            pet.mood = PetMood(rawValue: pet.mood.rawValue - 1) ?? .happy
+    func eraseLocalData() {
+        center.stopMonitoring([DesvicioConfig.dailyActivity, DesvicioConfig.focusActivity])
+        store.clearAllSettings()
+        FocusShield.stop()
+        SharedStorage.erase()
+        pet = PetState()
+        selection = FamilyActivitySelection()
+        limitMinutes = 120
+        isConfigured = false
+        focusSession = nil
+    }
+
+    func startFocus(minutes: Int) {
+        guard focusSession == nil else { return }
+        let endDate = Date().addingTimeInterval(TimeInterval(minutes * 60))
+        let calendar = Calendar.current
+        let start = calendar.dateComponents(
+            [.year, .month, .day, .hour, .minute, .second], from: .now
+        )
+        let end = calendar.dateComponents(
+            [.year, .month, .day, .hour, .minute, .second], from: endDate
+        )
+        let schedule = DeviceActivitySchedule(
+            intervalStart: start, intervalEnd: end, repeats: false
+        )
+        do {
+            try center.startMonitoring(DesvicioConfig.focusActivity, during: schedule)
+            let session = FocusSession(endDate: endDate, minutes: minutes)
+            SharedStorage.focusSession = session
+            focusSession = session
+            FocusShield.start(selection: selection)
+        } catch {
+            errorMessage = "Não foi possível iniciar a pausa: \(error.localizedDescription)"
         }
-        SharedStorage.pet = pet
+    }
+
+    func cancelFocus() {
+        center.stopMonitoring([DesvicioConfig.focusActivity])
+        FocusShield.stop()
+        SharedStorage.focusSession = nil
+        focusSession = nil
+    }
+
+    func completeFocusIfDue() {
+        guard let session = SharedStorage.focusSession,
+              Date() >= session.endDate else { return }
+        center.stopMonitoring([DesvicioConfig.focusActivity])
+        FocusShield.stop()
+        var state = SharedStorage.pet
+        state.focusMinutes += session.minutes
+        if state.mood == .tired { state.mood = .happy }
+        if state.mood == .sick { state.mood = .tired }
+        SharedStorage.pet = state
+        SharedStorage.focusSession = nil
+        pet = state
+        focusSession = nil
     }
 }
