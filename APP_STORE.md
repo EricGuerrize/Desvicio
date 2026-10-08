@@ -9,7 +9,7 @@ Esta lista descreve o estado atual do projeto. A aprovação final cabe à Apple
 - Seleção de apps, categorias e sites pelo controle de privacidade da Apple.
 - Autorização individual para o Tempo de Uso, monitoramento diário, estados do bichinho e bloqueio no estágio final.
 - Ação dentro do app para interromper o controle e apagar os dados locais.
-- Política de privacidade acessível dentro do app; texto preparado no repositório para futura publicação pública.
+- Política de privacidade acessível dentro do app e no repositório público; contato de privacidade e página de suporte ainda pendentes.
 - Ícone original no catálogo de ativos.
 - Manifestos de privacidade no app e na extensão para o uso de `UserDefaults`.
 

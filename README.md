@@ -10,6 +10,8 @@ Um bichinho virtual que reage ao tempo gasto nos aplicativos que você escolheu 
 
 O código anterior em SwiftUI permanece em `Desvicio/` e `Desvicio.xcodeproj` como referência da migração. O projeto ativo é o Flutter na raiz do repositório.
 
+**Vai continuar o projeto no terminal ou com outra IA?** Comece por [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md), que registra objetivo, decisões, o que já foi testado e as próximas etapas. [AGENTS.md](AGENTS.md) contém instruções curtas para assistentes de código.
+
 ## Rodar e visualizar no Xcode
 
 1. Instale [Flutter](https://docs.flutter.dev/get-started/install/macos) e Xcode. Neste Mac, Flutter 3.47.6 está instalado.
