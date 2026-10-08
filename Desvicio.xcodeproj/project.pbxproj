@@ -1,0 +1,258 @@
+// !$*UTF8*$!
+{
+ archiveVersion = 1;
+ classes = {};
+ objectVersion = 60;
+ objects = {
+
+/* Begin PBXBuildFile section */
+  100000000000000000000001 = {isa = PBXBuildFile; fileRef = 200000000000000000000001; };
+  100000000000000000000002 = {isa = PBXBuildFile; fileRef = 200000000000000000000002; };
+  100000000000000000000003 = {isa = PBXBuildFile; fileRef = 200000000000000000000003; };
+  100000000000000000000004 = {isa = PBXBuildFile; fileRef = 200000000000000000000004; };
+  100000000000000000000005 = {isa = PBXBuildFile; fileRef = 200000000000000000000005; };
+  100000000000000000000006 = {isa = PBXBuildFile; fileRef = 200000000000000000000006; };
+  100000000000000000000007 = {isa = PBXBuildFile; fileRef = 200000000000000000000006; };
+  100000000000000000000008 = {isa = PBXBuildFile; fileRef = 200000000000000000000007; };
+  100000000000000000000009 = {isa = PBXBuildFile; fileRef = 200000000000000000000010; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+  300000000000000000000001 = {
+   isa = PBXContainerItemProxy;
+   containerPortal = 900000000000000000000001;
+   proxyType = 1;
+   remoteGlobalIDString = 700000000000000000000002;
+   remoteInfo = DesvicioMonitor;
+  };
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+  400000000000000000000001 = {
+   isa = PBXCopyFilesBuildPhase;
+   buildActionMask = 2147483647;
+   dstPath = "";
+   dstSubfolderSpec = 13;
+   files = (100000000000000000000009, );
+   name = "Embed App Extensions";
+   runOnlyForDeploymentPostprocessing = 0;
+  };
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+  200000000000000000000001 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesvicioApp.swift; sourceTree = "<group>"; };
+  200000000000000000000002 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesvicioModel.swift; sourceTree = "<group>"; };
+  200000000000000000000003 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+  200000000000000000000004 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetView.swift; sourceTree = "<group>"; };
+  200000000000000000000005 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+  200000000000000000000006 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedState.swift; sourceTree = "<group>"; };
+  200000000000000000000007 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesvicioMonitor.swift; sourceTree = "<group>"; };
+  200000000000000000000008 = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Desvicio.entitlements; sourceTree = "<group>"; };
+  200000000000000000000009 = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DesvicioMonitor.entitlements; sourceTree = "<group>"; };
+  20000000000000000000000A = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+  20000000000000000000000F = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Desvicio.app; sourceTree = BUILT_PRODUCTS_DIR; };
+  200000000000000000000010 = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DesvicioMonitor.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+  500000000000000000000001 = {
+   isa = PBXGroup;
+   children = (500000000000000000000002, 500000000000000000000003, 500000000000000000000004, 500000000000000000000005, );
+   sourceTree = "<group>";
+  };
+  500000000000000000000002 = {
+   isa = PBXGroup;
+   children = (200000000000000000000001, 200000000000000000000002, 200000000000000000000003, 200000000000000000000004, 200000000000000000000005, 200000000000000000000008, );
+   path = Desvicio/App;
+   sourceTree = "<group>";
+  };
+  500000000000000000000003 = {
+   isa = PBXGroup;
+   children = (200000000000000000000006, );
+   path = Desvicio/Shared;
+   sourceTree = "<group>";
+  };
+  500000000000000000000004 = {
+   isa = PBXGroup;
+   children = (200000000000000000000007, 200000000000000000000009, 20000000000000000000000A, );
+   path = Desvicio/Monitor;
+   sourceTree = "<group>";
+  };
+  500000000000000000000005 = {
+   isa = PBXGroup;
+   children = (20000000000000000000000F, 200000000000000000000010, );
+   name = Products;
+   sourceTree = "<group>";
+  };
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+  700000000000000000000001 = {
+   isa = PBXNativeTarget;
+   buildConfigurationList = B00000000000000000000002;
+   buildPhases = (600000000000000000000001, 400000000000000000000001, );
+   buildRules = ();
+   dependencies = (800000000000000000000001, );
+   name = Desvicio;
+   productName = Desvicio;
+   productReference = 20000000000000000000000F;
+   productType = "com.apple.product-type.application";
+  };
+  700000000000000000000002 = {
+   isa = PBXNativeTarget;
+   buildConfigurationList = B00000000000000000000003;
+   buildPhases = (600000000000000000000002, );
+   buildRules = ();
+   dependencies = ();
+   name = DesvicioMonitor;
+   productName = DesvicioMonitor;
+   productReference = 200000000000000000000010;
+   productType = "com.apple.product-type.app-extension";
+  };
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+  900000000000000000000001 = {
+   isa = PBXProject;
+   attributes = {
+    BuildIndependentTargetsInParallel = 1;
+    LastUpgradeCheck = 1600;
+    TargetAttributes = {
+     700000000000000000000001 = {CreatedOnToolsVersion = 16.0; };
+     700000000000000000000002 = {CreatedOnToolsVersion = 16.0; };
+    };
+   };
+   buildConfigurationList = B00000000000000000000001;
+   compatibilityVersion = "Xcode 15.0";
+   developmentRegion = pt_BR;
+   hasScannedForEncodings = 0;
+   knownRegions = (pt_BR, en, Base, );
+   mainGroup = 500000000000000000000001;
+   productRefGroup = 500000000000000000000005;
+   projectDirPath = "";
+   projectRoot = "";
+   targets = (700000000000000000000001, 700000000000000000000002, );
+  };
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+  600000000000000000000001 = {
+   isa = PBXSourcesBuildPhase;
+   buildActionMask = 2147483647;
+   files = (100000000000000000000001, 100000000000000000000002, 100000000000000000000003, 100000000000000000000004, 100000000000000000000005, 100000000000000000000006, );
+   runOnlyForDeploymentPostprocessing = 0;
+  };
+  600000000000000000000002 = {
+   isa = PBXSourcesBuildPhase;
+   buildActionMask = 2147483647;
+   files = (100000000000000000000007, 100000000000000000000008, );
+   runOnlyForDeploymentPostprocessing = 0;
+  };
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+  800000000000000000000001 = {isa = PBXTargetDependency; target = 700000000000000000000002; targetProxy = 300000000000000000000001; };
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+  A00000000000000000000001 = {
+   isa = XCBuildConfiguration;
+   buildSettings = {
+    ALWAYS_SEARCH_USER_PATHS = NO;
+    CLANG_ENABLE_MODULES = YES;
+    CODE_SIGN_STYLE = Automatic;
+    IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+    SDKROOT = iphoneos;
+    SWIFT_VERSION = 5.9;
+    TARGETED_DEVICE_FAMILY = "1";
+   };
+   name = Debug;
+  };
+  A00000000000000000000002 = {
+   isa = XCBuildConfiguration;
+   buildSettings = {
+    ALWAYS_SEARCH_USER_PATHS = NO;
+    CLANG_ENABLE_MODULES = YES;
+    CODE_SIGN_STYLE = Automatic;
+    IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+    SDKROOT = iphoneos;
+    SWIFT_VERSION = 5.9;
+    TARGETED_DEVICE_FAMILY = "1";
+   };
+   name = Release;
+  };
+  A00000000000000000000003 = {
+   isa = XCBuildConfiguration;
+   buildSettings = {
+    CODE_SIGN_ENTITLEMENTS = Desvicio/App/Desvicio.entitlements;
+    CURRENT_PROJECT_VERSION = 1;
+    GENERATE_INFOPLIST_FILE = YES;
+    INFOPLIST_KEY_CFBundleDisplayName = "Desvício";
+    INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+    INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+    PRODUCT_BUNDLE_IDENTIFIER = com.desvicio.app;
+    PRODUCT_NAME = "$(TARGET_NAME)";
+    MARKETING_VERSION = 0.1;
+    SWIFT_EMIT_LOC_STRINGS = YES;
+   };
+   name = Debug;
+  };
+  A00000000000000000000004 = {
+   isa = XCBuildConfiguration;
+   buildSettings = {
+    CODE_SIGN_ENTITLEMENTS = Desvicio/App/Desvicio.entitlements;
+    CURRENT_PROJECT_VERSION = 1;
+    GENERATE_INFOPLIST_FILE = YES;
+    INFOPLIST_KEY_CFBundleDisplayName = "Desvício";
+    INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+    INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+    PRODUCT_BUNDLE_IDENTIFIER = com.desvicio.app;
+    PRODUCT_NAME = "$(TARGET_NAME)";
+    MARKETING_VERSION = 0.1;
+    SWIFT_EMIT_LOC_STRINGS = YES;
+   };
+   name = Release;
+  };
+  A00000000000000000000005 = {
+   isa = XCBuildConfiguration;
+   buildSettings = {
+    APPLICATION_EXTENSION_API_ONLY = YES;
+    CODE_SIGN_ENTITLEMENTS = Desvicio/Monitor/DesvicioMonitor.entitlements;
+    CURRENT_PROJECT_VERSION = 1;
+    GENERATE_INFOPLIST_FILE = NO;
+    INFOPLIST_FILE = Desvicio/Monitor/Info.plist;
+    PRODUCT_BUNDLE_IDENTIFIER = com.desvicio.app.monitor;
+    PRODUCT_NAME = "$(TARGET_NAME)";
+    MARKETING_VERSION = 0.1;
+    SKIP_INSTALL = YES;
+    SWIFT_EMIT_LOC_STRINGS = YES;
+   };
+   name = Debug;
+  };
+  A00000000000000000000006 = {
+   isa = XCBuildConfiguration;
+   buildSettings = {
+    APPLICATION_EXTENSION_API_ONLY = YES;
+    CODE_SIGN_ENTITLEMENTS = Desvicio/Monitor/DesvicioMonitor.entitlements;
+    CURRENT_PROJECT_VERSION = 1;
+    GENERATE_INFOPLIST_FILE = NO;
+    INFOPLIST_FILE = Desvicio/Monitor/Info.plist;
+    PRODUCT_BUNDLE_IDENTIFIER = com.desvicio.app.monitor;
+    PRODUCT_NAME = "$(TARGET_NAME)";
+    MARKETING_VERSION = 0.1;
+    SKIP_INSTALL = YES;
+    SWIFT_EMIT_LOC_STRINGS = YES;
+   };
+   name = Release;
+  };
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+  B00000000000000000000001 = {isa = XCConfigurationList; buildConfigurations = (A00000000000000000000001, A00000000000000000000002, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+  B00000000000000000000002 = {isa = XCConfigurationList; buildConfigurations = (A00000000000000000000003, A00000000000000000000004, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+  B00000000000000000000003 = {isa = XCConfigurationList; buildConfigurations = (A00000000000000000000005, A00000000000000000000006, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+/* End XCConfigurationList section */
+
+ };
+ rootObject = 900000000000000000000001;
+}
